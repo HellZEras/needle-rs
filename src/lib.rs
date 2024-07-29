@@ -1,20 +1,22 @@
 use std::ptr::null_mut;
+use errors::WinErros;
 use winapi::um::{handleapi::CloseHandle, winnt::{MEM_COMMIT, MEM_RESERVE, PAGE_EXECUTE_READWRITE}};
 use crate::{memory::{allocate_memory, create_remote_thread, get_module_handle_a, get_proc_address, wait_for_single_object, write_process_memory}, process::Process};
 
 mod memory;
 mod process;
 mod utils;
+mod errors;
 
 const INFINITE :u32 = 0xFFFFFFFF;
 
 
 pub trait Injector {
-    fn inject(&self, dll: &str) -> Result<(), std::io::Error>;
+    fn inject(&self, dll: &str) -> Result<(), WinErros>;
 }
 
 impl Injector for Process {
-    fn inject(&self, dll_path: &str) -> Result<(), std::io::Error> {
+    fn inject(&self, dll_path: &str) -> Result<(), WinErros> {
         let dll_c_path = std::ffi::CString::new(dll_path).unwrap();
         let dll_size = dll_c_path.as_bytes_with_nul().len()+1;
         
