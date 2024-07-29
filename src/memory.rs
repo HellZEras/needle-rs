@@ -1,5 +1,5 @@
-use winapi::{shared::{basetsd::SIZE_T, minwindef::{BOOL, DWORD, FARPROC, HMODULE, LPCVOID, LPDWORD, LPVOID, PUSHORT}, ntdef::LPSTR}, um::{errhandlingapi::GetLastError, libloaderapi::{GetModuleHandleA, GetProcAddress}, memoryapi::{VirtualAllocEx, WriteProcessMemory}, minwinbase::{LPSECURITY_ATTRIBUTES, LPTHREAD_START_ROUTINE}, processthreadsapi::{CreateRemoteThread, OpenProcess}, psapi::GetModuleBaseNameA, synchapi::WaitForSingleObject, tlhelp32::{CreateToolhelp32Snapshot, Process32Next, LPPROCESSENTRY32}, winnt::{HANDLE, LPCSTR}, wow64apiset::IsWow64Process2}};
-use std::{io::{Error, Read}, ptr::null_mut};
+use winapi::{shared::{basetsd::SIZE_T, minwindef::{BOOL, DWORD, FARPROC, HMODULE, LPCVOID, LPDWORD, LPVOID}, ntdef::LPSTR}, um::{errhandlingapi::GetLastError, libloaderapi::{GetModuleHandleA, GetProcAddress}, memoryapi::{VirtualAllocEx, WriteProcessMemory}, minwinbase::{LPSECURITY_ATTRIBUTES, LPTHREAD_START_ROUTINE}, processthreadsapi::{CreateRemoteThread, OpenProcess}, psapi::GetModuleBaseNameA, synchapi::WaitForSingleObject, tlhelp32::{CreateToolhelp32Snapshot, Process32Next, LPPROCESSENTRY32}, winnt::{HANDLE, LPCSTR}}};
+use std::{io::Error, ptr::null_mut};
 
 const WAIT_TIMEOUT :u32 = 0x00000102;
 const WAIT_FAILED :u32 = 0xFFFFFFFF;

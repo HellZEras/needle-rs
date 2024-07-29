@@ -27,59 +27,38 @@ pub fn prepare_process_entry() -> PROCESSENTRY32 {
     process_entry.dwSize = std::mem::size_of::<PROCESSENTRY32>() as u32;
     process_entry
 }
+
 pub fn is_syswow_64(
     h_process: HANDLE,
     p_process_machine: PUSHORT,
     p_native_machine: Option<PUSHORT>,
 ) -> Result<(), std::io::Error> {
-    let func_result: i32;
-
-    match p_native_machine {
-        Some(native_machine) => {
-            func_result = unsafe { IsWow64Process2(h_process, p_process_machine, native_machine) };
-        },
-        None => {
-            func_result = unsafe { IsWow64Process2(h_process, p_process_machine, null_mut()) };
-        }
-    }
-
+    let func_result: i32 = unsafe { IsWow64Process2(h_process, p_process_machine, p_native_machine.unwrap_or(null_mut())) };
     if func_result == 0 {
-        Err(get_last_error("Failed to check process architecture"))
-    } else {
-        Ok(())
+        return Err(get_last_error("Failed to check process architecture"))
     }
+    Ok(())
 }
 
 pub fn is_process_32bits(p_handle :HANDLE)-> Result<bool,std::io::Error>{
     let mut random : u16 = 1;
-    match is_syswow_64(p_handle as _, &mut random, None){
-        Ok(_) => {
-            match random{
-                0 => Ok(false),
-                _ => Ok(true),
-            }
-        },
-        Err(e) => Err(e),
-    }
+    is_syswow_64(p_handle as _, &mut random, None)?;
+    Ok(random != 0)
 }
 pub fn is_dll_32bits(path: &str) -> Result<bool,std::io::Error> {
-    match std::fs::File::open(path) {
-        Ok(mut file) => {
-            let mut buffer = Vec::new();
-            file.read_to_end(&mut buffer).unwrap();
-            let mut vec = Vec::new();
-            buffer.iter().for_each(|&character| {
-                if character.is_ascii_graphic() && character != b'\r' && character != b'\n' {
-                    vec.push(character as char)
-                }
-            });
-            for (i,char) in vec.iter().enumerate(){
-                if char.eq(&'P') && vec[i+1].eq(&'E') && vec[i+2].eq(&'d'){
-                    return Ok(false)
-                }
-            }
-            Ok(true)    
-        },
-        Err(e) => Err(e)
+    let mut file = std::fs::File::open(path)?;
+    let mut buffer = Vec::new();
+    file.read_to_end(&mut buffer).expect("Couldnt write file to buffer");
+    let mut vec = Vec::new();
+    buffer.iter().for_each(|&character| {
+        if character.is_ascii_graphic() && character != b'\r' && character != b'\n' {
+            vec.push(character as char)
+        }
+    });
+    for (i,char) in vec.iter().enumerate(){
+        if char.eq(&'P') && vec[i+1].eq(&'E') && vec[i+2].eq(&'d'){
+            return Ok(false)
+        }
     }
+    Ok(true)    
 }
