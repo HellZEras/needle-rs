@@ -1,15 +1,14 @@
 use std::ptr::null_mut;
 use errors::WinErros;
 use winapi::um::{handleapi::CloseHandle, winnt::{MEM_COMMIT, MEM_RESERVE, PAGE_EXECUTE_READWRITE}};
-use crate::{memory::{allocate_memory, create_remote_thread, get_module_handle_a, get_proc_address, wait_for_single_object, write_process_memory}, process::Process};
-
+use crate::memory::{allocate_memory, create_remote_thread, get_module_handle_a, get_proc_address, wait_for_single_object, write_process_memory};
+pub use process::Process;
 mod memory;
 mod process;
 mod utils;
 mod errors;
 
 const INFINITE :u32 = 0xFFFFFFFF;
-
 
 pub trait Injector {
     fn inject(&self, dll: &str) -> Result<(), WinErros>;
