@@ -1,6 +1,6 @@
 use std::{ffi::CStr, io::Read, ptr::null_mut};
 use winapi::{shared::minwindef::PUSHORT, um::{tlhelp32::PROCESSENTRY32, winnt::HANDLE, wow64apiset::IsWow64Process2}};
-use crate::errors::WinErros;
+use crate::errors::WinErrors;
 
 pub trait AsCstr {
     fn as_cstr(&mut self) -> &CStr;
@@ -31,15 +31,15 @@ pub fn is_syswow_64(
     h_process: HANDLE,
     p_process_machine: PUSHORT,
     p_native_machine: Option<PUSHORT>,
-) -> Result<(), WinErros> {
+) -> Result<(), WinErrors> {
     let func_result: i32 = unsafe { IsWow64Process2(h_process, p_process_machine, p_native_machine.unwrap_or(null_mut())) };
     if func_result == 0 {
-        return Err(WinErros::ProcessCheckFailure)
+        return Err(WinErrors::ProcessCheckFailure)
     }
     Ok(())
 }
 
-pub fn is_process_32bits(p_handle :HANDLE)-> Result<bool,WinErros>{
+pub fn is_process_32bits(p_handle :HANDLE)-> Result<bool,WinErrors>{
     let mut random : u16 = 1;
     is_syswow_64(p_handle as _, &mut random, None)?;
     Ok(random != 0)

@@ -1,6 +1,6 @@
 use winapi::{shared::{basetsd::SIZE_T, minwindef::{BOOL, DWORD, FARPROC, HMODULE, LPCVOID, LPDWORD, LPVOID}, ntdef::LPSTR}, um::{libloaderapi::{GetModuleHandleA, GetProcAddress}, memoryapi::{VirtualAllocEx, WriteProcessMemory}, minwinbase::{LPSECURITY_ATTRIBUTES, LPTHREAD_START_ROUTINE}, processthreadsapi::{CreateRemoteThread, OpenProcess}, psapi::GetModuleBaseNameA, synchapi::WaitForSingleObject, tlhelp32::{CreateToolhelp32Snapshot, Process32Next, LPPROCESSENTRY32}, winnt::{HANDLE, LPCSTR}}};
 use std::ptr::null_mut;
-use crate::errors::WinErros::{self, *};
+use crate::errors::WinErrors::{self, *};
 
 const WAIT_TIMEOUT :u32 = 0x00000102;
 const WAIT_FAILED :u32 = 0xFFFFFFFF;
@@ -13,7 +13,7 @@ pub fn allocate_memory(hprocess: HANDLE,
     dwsize: SIZE_T,
     flallocationtype: DWORD,
     flprotect: DWORD,
-) -> Result<LPVOID,WinErros>{
+) -> Result<LPVOID,WinErrors>{
     let buffer = unsafe { VirtualAllocEx(hprocess, lpaddress, dwsize, flallocationtype, flprotect)};
     match buffer.is_null(){
         true => Err(MemoryAllocationFailure),
@@ -27,7 +27,7 @@ pub fn write_process_memory(hprocess: HANDLE,
     lp_buffer: LPCVOID,
     nsize: SIZE_T,
     lp_number_of_bytes_written: Option< *mut SIZE_T >,
-) -> Result<(),WinErros> {
+) -> Result<(),WinErrors> {
     let func_return = unsafe { WriteProcessMemory(hprocess, lp_baseaddress, lp_buffer, nsize, lp_number_of_bytes_written.unwrap_or(null_mut()) ) };
     if func_return == 0{
         return Err(MemoryWritingFailure)
@@ -37,7 +37,7 @@ pub fn write_process_memory(hprocess: HANDLE,
 
 pub fn get_module_handle_a(
     lp_module_name: LPCSTR,
-) -> Result<HMODULE,WinErros> {
+) -> Result<HMODULE,WinErrors> {
     let handle = unsafe { GetModuleHandleA(lp_module_name) };
     match handle.is_null() {
         true => Err(ModuleHandleFailure),
@@ -48,7 +48,7 @@ pub fn get_module_handle_a(
 pub fn get_proc_address(
     h_module: HMODULE,
     lp_proc_name: LPCSTR,
-) -> Result<FARPROC,WinErros>{
+) -> Result<FARPROC,WinErrors>{
     let func = unsafe { GetProcAddress(h_module, lp_proc_name) };
     match func.is_null(){
         true => Err(ProcAddressFailure),
@@ -64,7 +64,7 @@ pub fn create_remote_thread(
     lp_parameter: LPVOID,
     dw_creation_flags: DWORD,
     lp_thread_id: LPDWORD,
-) -> Result<HANDLE,WinErros> 
+) -> Result<HANDLE,WinErrors> 
     {
         let thread = unsafe { CreateRemoteThread(h_process,lp_thread_attributes,dw_stack_size,lp_start_address,lp_parameter,dw_creation_flags,lp_thread_id) };
         match thread.is_null() {
@@ -76,7 +76,7 @@ pub fn create_remote_thread(
 pub fn wait_for_single_object(
     h_handle: HANDLE,
     dw_milliseconds: DWORD,
-) -> Result<(),WinErros>{
+) -> Result<(),WinErrors>{
     let wait_result = unsafe { WaitForSingleObject(h_handle, dw_milliseconds) };
     match wait_result {
         WAIT_ABANDONED => Err(WaitForSingleObjectAbandoned),
@@ -90,7 +90,7 @@ pub fn open_process(
     dw_desired_access: DWORD,
     b_inherit_handle: BOOL,
     dw_process_id: DWORD,
-) -> Result<HANDLE,WinErros>{
+) -> Result<HANDLE,WinErrors>{
     let process_handle = unsafe { OpenProcess(dw_desired_access, b_inherit_handle, dw_process_id)};
     match process_handle.is_null(){
         true => Err(ProcessOpeningFailure),
@@ -103,7 +103,7 @@ pub fn get_module_base_name_a(
     h_module: HMODULE,
     lp_base_name: LPSTR,
     n_size: DWORD,
-) -> Result<DWORD,WinErros>{
+) -> Result<DWORD,WinErrors>{
     let func = unsafe { GetModuleBaseNameA(h_process, h_module, lp_base_name, n_size)};
     if func == 0{
         return Err(ModuleBaseNameFailure)
@@ -114,7 +114,7 @@ pub fn get_module_base_name_a(
 pub fn create_tool_help_32_snapshot(
     dw_flags: DWORD,
     th32_process_id: DWORD,
-) -> Result<HANDLE,WinErros> {
+) -> Result<HANDLE,WinErrors> {
     let all_processes = unsafe { CreateToolhelp32Snapshot(dw_flags, th32_process_id) };
     if all_processes.is_null() {
         return Err(SnapshotCreationFailure)
@@ -125,7 +125,7 @@ pub fn create_tool_help_32_snapshot(
 pub fn process_32_next(
     h_snapshot: HANDLE,
     lppe: LPPROCESSENTRY32,
-) -> Result<bool,WinErros> {
+) -> Result<bool,WinErrors> {
     let next_process_bool = unsafe { Process32Next(h_snapshot, lppe) };
     match next_process_bool {
         0 => Ok(false),
