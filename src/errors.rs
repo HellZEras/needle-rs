@@ -33,5 +33,13 @@ pub enum WinErrors {
     #[error("Specified process was not found")]
     ProcessNotFound,
     #[error("Failed to check process architecture")]
-    ProcessCheckFailure
+    ProcessCheckFailure,
+    #[error("DLL and Process must be of the same architecture")]
+    ArchitectureMismatch,
+}
+
+#[derive(Debug,Error)]
+pub enum MethodErrors{
+    #[error("Failed to get first element")]
+    FirstElementError,
 }
