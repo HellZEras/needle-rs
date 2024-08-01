@@ -1,5 +1,6 @@
 pub use process::Process;
 pub use dll::Dll;
+pub use traits::{Injector,MapMemory};
 mod win_funcs;
 mod process;
 mod utils;
