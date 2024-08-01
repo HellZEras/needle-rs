@@ -60,7 +60,7 @@ impl Injector for Process {
             self.handle,
             null_mut(),
             0,
-            unsafe { std::mem::transmute(loadlib_func) },
+            unsafe { std::mem::transmute::<*mut winapi::shared::minwindef::__some_function, std::option::Option<unsafe extern "system" fn(*mut winapi::ctypes::c_void) -> u32>>(loadlib_func) },
             buffer,
             0,
             null_mut(),
