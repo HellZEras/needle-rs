@@ -1,4 +1,5 @@
 pub use process::Process;
+pub use dll::Dll;
 mod win_funcs;
 mod process;
 mod utils;
