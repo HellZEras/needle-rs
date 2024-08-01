@@ -57,13 +57,13 @@ pub fn prepare_process_entry() -> PROCESSENTRY32 {
 }
 
 
-pub fn is32_bits_dll(file_contents:Vec<char>) -> Result<bool, std::io::Error> {
+pub fn is32_bits_dll(file_contents:Vec<char>) -> bool {
     for (i,char) in file_contents.iter().enumerate(){
         if char.eq(&'P') && file_contents[i+1].eq(&'E') && file_contents[i+2].eq(&'d'){
-            return Ok(false)
+            return false
         }
     }
-    Ok(true)    
+    true    
 }
 
 pub fn init_contents(path :&str)-> Result<Vec<char>,std::io::Error>{

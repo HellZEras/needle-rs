@@ -2,15 +2,15 @@ use std::{cmp::Ordering, ptr::null_mut};
 
 use winapi::um::{handleapi::CloseHandle, winnt::{MEM_COMMIT, MEM_RESERVE, PAGE_EXECUTE_READWRITE}};
 
-use crate::{dll::Dll, errors::WinErrors, traits::Injector, win_funcs::{allocate_memory, create_remote_thread, get_module_handle_a, get_proc_address, wait_for_single_object, write_process_memory}, Process};
+use crate::{dll::Dll, errors::MappedErrors, traits::Injector, win_funcs::{allocate_memory, create_remote_thread, get_module_handle_a, get_proc_address, wait_for_single_object, write_process_memory}, Process};
 
 const INFINITE :u32 = 0xFFFFFFFF;
 
 impl Injector for Process {
-    fn inject(&self, dll: Dll) -> Result<(), WinErrors> {
+    fn inject(&self, dll: Dll) -> Result<(), MappedErrors> {
         // Check if the DLL architecture matches the process architecture
         if dll.architecture.cmp(&self.architecture) != Ordering::Equal{
-            return Err(WinErrors::ArchitectureMismatch);
+            return Err(MappedErrors::ArchitectureMismatch);
         }
         
         // Convert the DLL path to a null-terminated C string and calculate its size

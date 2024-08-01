@@ -3,7 +3,7 @@ use thiserror::Error;
 
 
 #[derive(Debug,Error)]
-pub enum WinErrors {
+pub enum MappedErrors {
     #[error("Memory allocation failed")]
     MemoryAllocationFailure,
     #[error("Writing process memory failed")]

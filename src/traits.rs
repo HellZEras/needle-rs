@@ -1,12 +1,12 @@
 use std::ffi::CStr;
-use crate::{dll::Dll, errors::{MethodErrors, WinErrors}};
+use crate::{dll::Dll, errors::{MethodErrors, MappedErrors}};
 
 pub trait AsCstr {
     fn as_cstr(&mut self) -> &CStr;
 }
 
 pub trait Injector {
-    fn inject(&self, dll: Dll) -> Result<(), WinErrors>;
+    fn inject(&self, dll: Dll) -> Result<(), MappedErrors>;
 }
 
 pub trait FirstChar {
@@ -26,7 +26,7 @@ pub trait ToU8Vec {
 }
 
 pub trait Is32bitsProcess{
-    fn get_architecture(self)-> Result<bool,WinErrors>;
+    fn get_architecture(self)-> Result<bool,MappedErrors>;
 }
 pub trait MapMemory{
     fn find_sig(self,sig:&str) -> Vec<*mut u8>;

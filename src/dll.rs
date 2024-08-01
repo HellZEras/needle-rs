@@ -13,7 +13,7 @@ impl Dll {
         let buffer = init_contents(path)?;
         Ok(Dll {
             path: path.to_string(),
-            architecture: if is32_bits_dll(buffer.clone())?{32}else{64},
+            architecture: if is32_bits_dll(buffer.clone()){32}else{64},
         })
     }
 }
