@@ -1,8 +1,6 @@
 use thiserror::Error;
 
-
-
-#[derive(Debug,Error)]
+#[derive(Debug, Error)]
 pub enum MappedErrors {
     #[error("Memory allocation failed")]
     MemoryAllocationFailure,
@@ -36,10 +34,4 @@ pub enum MappedErrors {
     ProcessCheckFailure,
     #[error("DLL and Process must be of the same architecture")]
     ArchitectureMismatch,
-}
-
-#[derive(Debug,Error)]
-pub enum MethodErrors{
-    #[error("Failed to get first element")]
-    FirstElementError,
 }

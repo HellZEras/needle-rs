@@ -1,14 +1,13 @@
-pub use process::Process;
 pub use dll::Dll;
-pub use traits::{Injector,MapMemory};
-mod win_funcs;
-mod process;
-mod utils;
-mod errors;
-mod traits;
+pub use process::Process;
+pub use traits::{Injector, MapMemory};
 mod dll;
+mod errors;
 mod injector;
-
+mod process;
+mod traits;
+mod utils;
+mod win_funcs;
 
 #[cfg(test)]
 mod tests {
@@ -20,10 +19,11 @@ mod tests {
     #[test]
     fn it_works() {
         // let dll = Dll::new("D:\\Projects\\first_dll\\target\\release\\64dll.dll").unwrap();
-        let dll = Dll::new("D:\\Projects\\first_dll\\target\\i686-pc-windows-msvc\\release\\32dll.dll").unwrap();
+        let dll =
+            Dll::new("D:\\Projects\\first_dll\\target\\i686-pc-windows-msvc\\release\\32dll.dll")
+                .unwrap();
         let process = Process::first_by_name("notepad.exe").unwrap();
-        
-        process.inject(dll).unwrap()
 
+        process.inject(dll).unwrap()
     }
 }
